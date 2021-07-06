@@ -4,17 +4,19 @@ import { Model, ObjectId } from 'mongoose';
 import { IMark } from '../interfaces/mark.interface';
 import { CreateMarkDto } from '../dto/create-mark.dto';
 import { EditMarkDto } from '../dto/edit-mark.dto';
+import { ITag } from '../interfaces/tag.interface';
 
 @Injectable()
 export class MarkService {
   constructor(
-    @InjectModel('Mark') private markModel: Model<IMark>
+    @InjectModel('Mark') private markModel: Model<IMark>,
+    @InjectModel('Tag') private tagModel: Model<ITag>
   ) {}
 
   async create(createMarkDto: CreateMarkDto): Promise<IMark> {
-    const folder = new this.markModel(createMarkDto)
-    return folder.save()
-  }
+    const mark = new this.markModel(createMarkDto)
+    return mark.save()
+   }
 
   async get(id: ObjectId): Promise<IMark> {
     const mark: IMark = await this.markModel.findOne({ _id: id })
@@ -35,5 +37,15 @@ export class MarkService {
   async delete(id: ObjectId): Promise<{ ok?: number; n?: number; } & { deletedCount?: number; }> {
     const response = await this.markModel.deleteOne({ _id: id })
     return response
+  }
+
+  async searchTag(tag: ITag): Promise<ITag> {
+    const resTag = await this.tagModel.findOne({ name: tag.name.toUpperCase() })
+    return resTag
+  }
+
+  async createTag(tag: ITag): Promise<ITag> {
+    const newTag = new this.tagModel({ name: tag.name.toUpperCase() })
+    return newTag.save()
   }
 }

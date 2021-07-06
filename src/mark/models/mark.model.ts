@@ -21,7 +21,7 @@ export class Mark<IMark> {
   type: IType
 
   @Prop({ type: [{ type: MongoSchema.Types.ObjectId, ref: 'Tag' }] })
-  tag: ITag
+  tags: ITag[]
 
 }
 

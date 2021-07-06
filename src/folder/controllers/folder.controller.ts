@@ -5,15 +5,18 @@ import { FolderService } from '../services/folder.service';
 import { CreateFolderDto } from '../dto/create-folder.dto';
 import { EditFolderDto } from '../dto/edit-folder.dto';
 import { ObjectId } from 'mongoose';
+import { UserService } from '../../user/services/user.service';
 
 @Controller('folder')
 export class FolderController {
 
-  constructor(private readonly folderService: FolderService) {}
+  constructor(private readonly folderService: FolderService, private readonly userService: UserService) {}
 
   @Post('create')
   async create(@Res() res: Response, @Body() createFolderDto: CreateFolderDto): Promise<Response> {
+    const name = "patxi"
     const folder: IFolder = await this.folderService.create(createFolderDto)
+    await this.userService.addFolder(name, folder._id)
     return res.status(HttpStatus.CREATED).json({ folder })
   }
 

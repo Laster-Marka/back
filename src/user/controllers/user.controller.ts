@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpStatus, Post, Res, Headers, Put, Param } from '@nestjs/common';
+import { Body, Controller, Get, HttpStatus, Post, Res, Headers, Put, Param, Delete } from '@nestjs/common';
 import { Response } from 'express'
 import { UserService } from '../services/user.service'
 import { CreateUserDto } from '../dto/create-user.dto'
@@ -6,15 +6,13 @@ import { EditUserDto } from '../dto/edit-user.dto'
 import { EditPasswordDto } from '../dto/edit-password.dto'
 import { GetUserDto } from '../dto/get-user.dto'
 import { IUser } from '../interfaces/user.interface'
-import { IFolder } from '../../folder/interfaces/folder.interface';
-import { FolderService } from '../../folder/services/folder.service';
-import { ObjectId } from 'mongoose';
+import { AuthService } from '../../auth/auth.service';
 
 @Controller('user')
 export class UserController {
   constructor(
     private readonly userService: UserService,
-    private readonly folderService: FolderService
+    private readonly authService: AuthService
   ) {}
 
   @Post('signup')
@@ -25,8 +23,16 @@ export class UserController {
 
   @Post('signin')
   async signin(@Res() res: Response, @Body() getUserDto: GetUserDto) {
-    const token: string = await this.userService.signin(getUserDto.email)
-    return res.status(HttpStatus.OK).json({ token })
+    const user: IUser | null = await this.authService.validateUser(
+      getUserDto.email,
+      getUserDto.password
+    )
+    if (user) {
+      const token = await this.authService.login(user)
+      return res.status(HttpStatus.OK).json({ token })
+    } else {
+      res.status(HttpStatus.BAD_REQUEST).json({ msg: 'Wrong user or password' })
+    }
   }
 
   @Get(':name')
@@ -47,21 +53,15 @@ export class UserController {
     return res.status(HttpStatus.OK).json({ user })
   }
 
-  @Post('folders')
-  async getFolders(@Res() res: Response, @Headers('x-access-token') token: string) {
-    const idUser = 1
-    const folders = await this.userService.getFoldersByUser(idUser)
-    const foldersWithMarks: IFolder[] = []
-    folders.map(async (folder) => {
-      const folderWithMark: IFolder = await this.folderService.getMarksByFolder(folder._id)
-      foldersWithMarks.push(folderWithMark)
-    })
-    return res.status(HttpStatus.OK).json({ folders })
+  @Delete('delete/:name')
+  async delete(@Res() res: Response, @Param('name') name: string): Promise<Response> {
+    const response: { ok?: number; n?: number; } & { deletedCount?: number; } = await this.userService.delete(name)
+    return res.status(HttpStatus.OK).json({ response })
   }
 
-  @Get('special')
-  special(@Res() res: Response, @Headers('x-access-token') token: string) {
-    const obj: any = this.userService.special(token)
-    return res.status(HttpStatus.OK).json({ obj })
-  }
+  // @Get('special')
+  // special(@Res() res: Response, @Headers('x-access-token') token: string) {
+  //   const obj: any = this.userService.special(token)
+  //   return res.status(HttpStatus.OK).json({ obj })
+  // }
 }

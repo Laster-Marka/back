@@ -1,5 +1,5 @@
 export class EditPasswordDto {
-  readonly email: string
   readonly oldPassword: string
+  readonly oldConfirmPassword: string
   readonly newPassword: string
 }

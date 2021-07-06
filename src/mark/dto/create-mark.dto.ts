@@ -7,5 +7,5 @@ export class CreateMarkDto {
   readonly markdown: string
   readonly image: string
   readonly type: IType
-  readonly tag: ITag
+  tags: ITag[]
 }

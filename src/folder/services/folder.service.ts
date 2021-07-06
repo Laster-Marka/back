@@ -4,6 +4,7 @@ import { Model, ObjectId } from 'mongoose';
 import { CreateFolderDto } from '../dto/create-folder.dto';
 import { EditFolderDto } from '../dto/edit-folder.dto';
 import { IFolder } from '../interfaces/folder.interface';
+import { IUser } from '../../user/interfaces/user.interface';
 
 @Injectable()
 export class FolderService {
@@ -29,12 +30,8 @@ export class FolderService {
     return folder
   }
 
-  async getMarksByFolder(idFolder: number): Promise<IFolder> {
-    const folder = await this.folderModel.findOne({ _id: idFolder })
-    if (!folder) {
-      //return "Folder not found"
-    }
-    return folder
+  async addMark(id: string, markId: ObjectId): Promise<void> {
+    const folder: IFolder = await this.folderModel.findOneAndUpdate({ _id: id },{ $push: {marks: markId} }, {new: true})
   }
 
   async delete(id: ObjectId): Promise<any> {
