@@ -31,11 +31,22 @@ export class FolderService {
   }
 
   async addMark(id: string, markId: ObjectId): Promise<void> {
-    const folder: IFolder = await this.folderModel.findOneAndUpdate({ _id: id },{ $push: {marks: markId} }, {new: true})
+    const folder: IFolder = await this.folderModel.findOneAndUpdate(
+      { _id: id },
+      { $push: { marks: markId } },
+      { new: true }
+    )
   }
 
   async delete(id: ObjectId): Promise<any> {
     const response = await this.folderModel.deleteOne({ _id: id })
     return response
+  }
+
+  async deleteMarkRef(markId: ObjectId): Promise<void> {
+    const folder: IFolder = await this.folderModel.findOneAndUpdate(
+      { marks: { $in: [markId] } },
+      { $pull: { marks: markId } }
+    )
   }
 }

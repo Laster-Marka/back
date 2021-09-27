@@ -60,9 +60,14 @@ export class UserService {
       path: 'folders',
       populate: {
         path: 'marks',
-        populate: {
-          path: 'tags'
-        }
+        populate: [
+          {
+            path: 'tags'
+          },
+          {
+            path: 'type'
+          }
+        ]
       }
     })
     console.log(user)
@@ -72,6 +77,13 @@ export class UserService {
 
   async addFolder(name: string, id: ObjectId): Promise<void> {
     const user: IUser = await this.userModel.findOneAndUpdate({ name: name },{ $push: {folders: id} }, {new: true})
+  }
+
+  async deleteFolderRef(id: any): Promise<void> {
+    const user: IUser = await this.userModel.findOneAndUpdate(
+      { folders: { $in: [id] } },
+      { $pull: { folders: id } }
+    )
   }
 
   // special(token: string): any {

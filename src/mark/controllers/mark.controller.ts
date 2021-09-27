@@ -12,14 +12,18 @@ import { ITag } from '../interfaces/tag.interface';
 @Controller('mark')
 export class MarkController {
 
-  constructor(private readonly markService: MarkService, private readonly folderService: FolderService) {}
+  constructor(
+    private readonly markService: MarkService,
+    private readonly folderService: FolderService
+  ) {}
 
-  @Post('create')
+  @Post()
   async create(@Res() res: Response, @Body('folderId') folderId: string, @Body() createMarkDto: CreateMarkDto): Promise<Response> {
     const tags = await this.getTagIds(createMarkDto.tags)
     createMarkDto.tags = tags
     const mark: IMark = await this.markService.create(createMarkDto)
     await this.folderService.addMark(folderId, mark._id)
+    //TODO: Return mark
     return res.status(HttpStatus.CREATED).json({ mark })
   }
 
@@ -29,15 +33,18 @@ export class MarkController {
     return res.status(HttpStatus.OK).json({ mark })
   }
 
-  @Put('edit/:id')
+  @Put(':id')
   async edit(@Res() res: Response, @Param('id') id: ObjectId, @Body() editMarkDto: EditMarkDto): Promise<Response> {
+    const tags = await this.getTagIds(editMarkDto.tags)
+    editMarkDto.tags = tags
     const mark: IMark = await this.markService.edit(id, editMarkDto)
     return res.status(HttpStatus.OK).json({ mark })
   }
 
-  @Delete('delete/:id')
+  @Delete(':id')
   async delete(@Res() res: Response, @Param('id') id: ObjectId): Promise<Response> {
     const response: { ok?: number; n?: number; } & { deletedCount?: number; } = await this.markService.delete(id)
+    await this.folderService.deleteMarkRef(id)
     return res.status(HttpStatus.OK).json({ response })
   }
 

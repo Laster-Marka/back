@@ -3,8 +3,8 @@ import { IType } from '../../mark/interfaces/type.interface';
 import { ITag } from '../../mark/interfaces/tag.interface';
 
 export class CreateUserDto {
-  readonly id: number
-  readonly link: string
+  readonly email: string
+  readonly password: string
   readonly markdown: string
   readonly image: string
   readonly folder: IFolder

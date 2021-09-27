@@ -5,6 +5,7 @@ import { IMark } from '../interfaces/mark.interface';
 import { CreateMarkDto } from '../dto/create-mark.dto';
 import { EditMarkDto } from '../dto/edit-mark.dto';
 import { ITag } from '../interfaces/tag.interface';
+import { IFolder } from '../../folder/interfaces/folder.interface';
 
 @Injectable()
 export class MarkService {
@@ -27,7 +28,7 @@ export class MarkService {
   }
 
   async edit(id: ObjectId, editMarkDto: EditMarkDto): Promise<IMark> {
-    const mark = await this.markModel.findByIdAndUpdate({ _id: id  }, { title: editMarkDto.title, link: editMarkDto.link, markdown: editMarkDto.markdown, image: editMarkDto.image, type: editMarkDto.type, tag: editMarkDto.tag  }, {new: true})
+    const mark = await this.markModel.findByIdAndUpdate({ _id: id  }, { title: editMarkDto.title, link: editMarkDto.link, markdown: editMarkDto.markdown, image: editMarkDto.image, type: editMarkDto.type, tags: editMarkDto.tags  }, {new: true})
     if (!mark) {
 
     }

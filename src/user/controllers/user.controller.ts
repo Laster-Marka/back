@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpStatus, Post, Res, Headers, Put, Param, Delete } from '@nestjs/common';
+import { Body, Controller, Get, HttpStatus, Post, Res, Put, Param, Delete } from '@nestjs/common'
 import { Response } from 'express'
 import { UserService } from '../services/user.service'
 import { CreateUserDto } from '../dto/create-user.dto'
@@ -6,7 +6,7 @@ import { EditUserDto } from '../dto/edit-user.dto'
 import { EditPasswordDto } from '../dto/edit-password.dto'
 import { GetUserDto } from '../dto/get-user.dto'
 import { IUser } from '../interfaces/user.interface'
-import { AuthService } from '../../auth/auth.service';
+import { AuthService } from '../../auth/auth.service'
 
 @Controller('user')
 export class UserController {
@@ -16,13 +16,13 @@ export class UserController {
   ) {}
 
   @Post('signup')
-  async signup(@Res() res: Response, @Body() createUserDto: CreateUserDto): Promise<Response> {
+  async signUp(@Res() res: Response, @Body() createUserDto: CreateUserDto): Promise<Response> {
     const user: IUser = await this.userService.signup(createUserDto)
     return res.status(HttpStatus.CREATED).json({ user })
   }
 
-  @Post('signin')
-  async signin(@Res() res: Response, @Body() getUserDto: GetUserDto) {
+  @Post('login')
+  async logIn(@Res() res: Response, @Body() getUserDto: GetUserDto) {
     const user: IUser | null = await this.authService.validateUser(
       getUserDto.email,
       getUserDto.password
@@ -32,6 +32,16 @@ export class UserController {
       return res.status(HttpStatus.OK).json({ token })
     } else {
       res.status(HttpStatus.BAD_REQUEST).json({ msg: 'Wrong user or password' })
+    }
+  }
+
+  @Post('logout')
+  async logOut(@Res() res: Response, @Body() getUserDto: GetUserDto) {
+    if (getUserDto) {
+      const token = await this.authService.logout(getUserDto)
+      return res.status(HttpStatus.OK).json()
+    } else {
+      res.status(HttpStatus.BAD_REQUEST).json({ msg: 'Internal Error' })
     }
   }
 
@@ -55,7 +65,7 @@ export class UserController {
 
   @Delete('delete/:name')
   async delete(@Res() res: Response, @Param('name') name: string): Promise<Response> {
-    const response: { ok?: number; n?: number; } & { deletedCount?: number; } = await this.userService.delete(name)
+    const response: { ok?: number; n?: number } & { deletedCount?: number; } = await this.userService.delete(name)
     return res.status(HttpStatus.OK).json({ response })
   }
 

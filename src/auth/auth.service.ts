@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from '../user/services/user.service';
 import { IUser } from '../user/interfaces/user.interface';
+import { GetUserDto } from '../user/dto/get-user.dto';
 
 @Injectable()
 export class AuthService {
@@ -29,5 +30,12 @@ export class AuthService {
     return {
       access_token: this.jwtService.sign(payload)
     }
+  }
+
+  async logout(getUserDto: GetUserDto) {
+    if(getUserDto){
+      return null
+    }
+    return null
   }
 }
