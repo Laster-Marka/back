@@ -8,7 +8,10 @@ import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
-    MongooseModule.forRoot('mongodb://localhost/laster-nest', { useCreateIndex: true }),
+    MongooseModule.forRoot(
+      'mongodb+srv://admin:temporaryadminpass@jscluster.r9ocu.mongodb.net/laster-marka',
+      { useCreateIndex: true }
+    ),
     UserModule,
     FolderModule,
     MarkModule,
