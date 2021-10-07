@@ -70,12 +70,16 @@ export class UserController {
 
   @Get()
   async get(@Req() req: Request, @Res() res: Response) {
-    try {
-      const cookie = req.cookies['jwt']
-      const name: string = await this.getUserFromCookie(cookie)
-      res.status(HttpStatus.OK).json({ name })
-    } catch (e) {
-      throw new UnauthorizedException()
+    const cookie = req.cookies['jwt']
+    if(cookie) {
+      try {
+        const name: string = await this.getUserFromCookie(cookie)
+        res.status(HttpStatus.OK).json({ name })
+      } catch (e) {
+        throw new UnauthorizedException()
+      }
+    } else {
+      return res.status(HttpStatus.OK).json()
     }
   }
 
