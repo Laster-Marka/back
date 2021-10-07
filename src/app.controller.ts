@@ -1,4 +1,4 @@
-import { Controller, Get, HttpStatus, Req, Res } from '@nestjs/common';
+import { Controller, Get, HttpStatus, Req, Res, UnauthorizedException } from '@nestjs/common';
 import { Response } from 'express';
 import { UserService } from './user/services/user.service';
 
@@ -11,8 +11,12 @@ export class AppController {
   @Get('home')
   async data(@Res() res: Response, @Req() req) {
     const cookie = req.cookies['jwt']
-    const name = await this.userService.verifyToken(cookie)
-    const folders = await this.userService.getFoldersByUser(name)
-    return res.status(HttpStatus.OK).json({ folders })
+    if(cookie) {
+      const name = await this.userService.verifyToken(cookie)
+      const folders = await this.userService.getFoldersByUser(name)
+      return res.status(HttpStatus.OK).json({ folders })
+    } else {
+      return res.status(HttpStatus.OK).json()
+    }
   }
 }
