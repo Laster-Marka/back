@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose'
 import { CreateUserDto } from '../dto/create-user.dto'
 import { EditUserDto } from '../dto/edit-user.dto'
@@ -12,7 +12,7 @@ import { IFolder } from '../../folder/interfaces/folder.interface';
 export class UserService {
   constructor(
     @InjectModel('User') private userModel: Model<IUser>,
-    //private readonly jwtService: JwtService
+    private readonly jwtService: JwtService
   ) {}
 
   async signup(createUserDto: CreateUserDto): Promise<IUser> {
@@ -26,9 +26,25 @@ export class UserService {
   }
 
   async get(name: string): Promise<IUser> {
-    console.log(name)
     const user = await this.userModel.findOne({ name: name })
     return user
+  }
+
+  async getToken(name: string): Promise<string> {
+    const token = await this.jwtService.signAsync({ name: name })
+    return token
+  }
+
+  async verifyToken(cookie: any): Promise<any> {
+    const data = await this.jwtService.verifyAsync(cookie)
+    if (!data) {
+      throw new UnauthorizedException()
+    }
+    const user: IUser = await this.get(data['name'])
+    if (!user) {
+      throw new UnauthorizedException()
+    }
+    return user.name
   }
 
   async edit(name: string, editUserDto: EditUserDto): Promise<IUser> {
@@ -70,7 +86,6 @@ export class UserService {
         ]
       }
     })
-    console.log(user)
     const folders = user.folders
     return folders
   }
@@ -85,10 +100,4 @@ export class UserService {
       { $pull: { folders: id } }
     )
   }
-
-  // special(token: string): any {
-  //   const obj = this.jwtService.verify(token)
-  //   return obj
-  // }
-
 }

@@ -17,15 +17,16 @@ import { TokenMiddleware } from '../user/middlewares/token.middleware';
   providers: [FolderService],
   exports: [FolderService]
 })
-export class FolderModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {
-    consumer
-      .apply(TokenMiddleware)
-      .forRoutes(
-        { path: 'folder/create', method: RequestMethod.POST },
-        { path: 'folder/:id', method: RequestMethod.GET },
-        { path: 'folder/edit/:id', method: RequestMethod.PUT },
-        { path: 'folder/delete/:name', method: RequestMethod.DELETE }
-      )
-  }
-}
+export class FolderModule {}
+// export class FolderModule implements NestModule {
+//   configure(consumer: MiddlewareConsumer) {
+//     consumer
+//       .apply(TokenMiddleware)
+//       .forRoutes(
+//         // { path: 'folder', method: RequestMethod.POST },
+//         { path: 'folder/:id', method: RequestMethod.GET },
+//         { path: 'folder/:id', method: RequestMethod.PUT },
+//         { path: 'folder/:name', method: RequestMethod.DELETE }
+//       )
+//   }
+// }

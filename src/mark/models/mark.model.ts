@@ -15,6 +15,9 @@ export class Mark<IMark> {
   markdown: string
 
   @Prop()
+  description: string
+
+  @Prop()
   image: string
 
   @Prop({ required: true, type: [{ type: MongoSchema.Types.ObjectId, ref: 'Type' }] })

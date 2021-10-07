@@ -4,9 +4,9 @@ import { ITag } from '../interfaces/tag.interface';
 export class EditMarkDto {
   readonly title: string
   readonly link: string
-  //TODO: DESCRIPTION
+  readonly description: string
   readonly markdown: string
   readonly image: string
-  readonly type: IType
-  tags: ITag[]
+  readonly type: string
+  readonly tags: ITag[]
 }
