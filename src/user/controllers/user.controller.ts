@@ -70,7 +70,6 @@ export class UserController {
 
   @Get()
   async get(@Req() req: Request, @Res() res: Response) {
-    res.set('Access-Control-Allow-Origin', '*')
     const cookie = req.cookies['jwt']
     if(cookie) {
       try {
