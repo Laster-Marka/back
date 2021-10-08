@@ -15,7 +15,7 @@ export class AppController {
       const name = await this.userService.verifyToken(cookie)
       const folders = await this.userService.getFoldersByUser(name)
       if(folders === undefined || !folders){
-        return res.status(HttpStatus.OK).json({ })
+        return res.status(HttpStatus.OK).json()
       }
       return res.status(HttpStatus.OK).json({ folders })
     } else {
