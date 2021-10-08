@@ -52,8 +52,12 @@ export class UserController {
       const isCorrectPassword = await user.comparePassword(getUserDto.password)
       if (isCorrectPassword) {
         const token = await this.userService.getToken(user.name)
-        //const token = await this.jwtService.signAsync({ name: user.name })
-        res.cookie('jwt', token, { httpOnly: true })
+        res.cookie('jwt', token, {
+          sameSite: 'strict',
+          path: '/',
+          expires: new Date(new Date().getTime() + 100 * 1000),
+          httpOnly: true
+        })
         return token
       } else {
         res.status(HttpStatus.BAD_REQUEST).json({ msg: 'Wrong credentials' })
@@ -70,10 +74,9 @@ export class UserController {
   }
 
   @Get()
-  async get(@Req() req: Request, @Res() res: Response, @Body('cookie') cookie: string) {
+  async get(@Req() req: Request, @Res() res: Response) {
     res.setHeader('Access-Control-Allow-Origin', 'https://laster-marka.herokuapp.com')
-    console.log(req)
-    //const cookie = req.cookies['jwt']
+    const cookie = req.cookies['jwt']
     if (cookie) {
       try {
         const name: string = await this.getUserFromCookie(cookie)
