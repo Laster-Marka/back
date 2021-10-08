@@ -70,10 +70,10 @@ export class UserController {
   }
 
   @Get()
-  async get(@Req() req: Request, @Res() res: Response) {
+  async get(@Req() req: Request, @Res() res: Response, @Body('cookie') cookie: string) {
     res.setHeader('Access-Control-Allow-Origin', 'https://laster-marka.herokuapp.com')
-    const cookie = req.cookies['jwt']
-    if(cookie) {
+    //const cookie = req.cookies['jwt']
+    if (cookie) {
       try {
         const name: string = await this.getUserFromCookie(cookie)
         res.status(HttpStatus.OK).json({ name })
@@ -81,8 +81,7 @@ export class UserController {
         throw new UnauthorizedException()
       }
     } else {
-      const name = 'pepe'
-      return res.status(HttpStatus.OK).json({ name })
+      return res.status(HttpStatus.NO_CONTENT).json()
     }
   }
 
