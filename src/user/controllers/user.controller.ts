@@ -81,7 +81,7 @@ export class UserController {
         throw new UnauthorizedException()
       }
     } else {
-      return res.status(HttpStatus.OK).json(req)
+      return res.status(HttpStatus.OK).json(req.cookies)
     }
   }
 
