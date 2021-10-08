@@ -52,7 +52,7 @@ export class UserController {
       const isCorrectPassword = await user.comparePassword(getUserDto.password)
       if (isCorrectPassword) {
         const token = await this.userService.getToken(user.name)
-        res.cookie('jwt', token, {
+        res.status(HttpStatus.ACCEPTED).cookie('jwt', token, {
           sameSite: 'strict',
           path: '/',
           expires: new Date(new Date().getTime() + 100 * 1000),
@@ -85,7 +85,7 @@ export class UserController {
         throw new UnauthorizedException()
       }
     } else {
-      return res.status(HttpStatus.NO_CONTENT).json()
+      return res.status(HttpStatus.NO_CONTENT).json(req.toString())
     }
   }
 
