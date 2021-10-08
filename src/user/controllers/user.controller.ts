@@ -53,7 +53,7 @@ export class UserController {
       if (isCorrectPassword) {
         const token = await this.userService.getToken(user.name)
         res.status(HttpStatus.ACCEPTED).cookie('jwt', token, {
-          sameSite: 'strict',
+          sameSite: 'none',
           path: '/',
           expires: new Date(new Date().getTime() + 100 * 1000),
           httpOnly: true
