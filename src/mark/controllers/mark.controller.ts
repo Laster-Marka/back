@@ -50,7 +50,7 @@ export class MarkController {
 
   @Post()
   async create(@Req() req: Request, @Res() res: Response, @Body('folderId') folderId: string, @Body('createMarkDto') createMarkDto: CreateMarkDto): Promise<Response> {
-    console.log(createMarkDto)
+    res.setHeader('Access-Control-Allow-Origin', 'https://laster-marka.herokuapp.com')
     const cookie = req.cookies['jwt']
     await this.getUserFromCookie(cookie)
     const tags: ITag[] = await this.getTagIds(createMarkDto.tags)
@@ -64,6 +64,7 @@ export class MarkController {
 
   @Get(':id')
   async get(@Req() req: Request, @Res() res: Response, @Param('id') id: ObjectId) {
+    res.setHeader('Access-Control-Allow-Origin', 'https://laster-marka.herokuapp.com')
     const cookie = req.cookies['jwt']
     await this.getUserFromCookie(cookie)
     const mark: IMark = await this.markService.get(id)
@@ -72,6 +73,7 @@ export class MarkController {
 
   @Put(':id')
   async edit(@Req() req: Request, @Res() res: Response, @Param('id') id: ObjectId, @Body('editMarkDto') editMarkDto: EditMarkDto): Promise<Response> {
+    res.setHeader('Access-Control-Allow-Origin', 'https://laster-marka.herokuapp.com')
     const cookie = req.cookies['jwt']
     await this.getUserFromCookie(cookie)
     const tags = await this.getTagIds(editMarkDto.tags)
@@ -83,6 +85,7 @@ export class MarkController {
 
   @Delete(':id')
   async delete(@Req() req: Request, @Res() res: Response, @Param('id') id: ObjectId): Promise<Response> {
+    res.setHeader('Access-Control-Allow-Origin', 'https://laster-marka.herokuapp.com')
     const cookie = req.cookies['jwt']
     await this.getUserFromCookie(cookie)
     const response: { ok?: number; n?: number; } & { deletedCount?: number; } = await this.markService.delete(id)
