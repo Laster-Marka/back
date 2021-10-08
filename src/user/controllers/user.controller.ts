@@ -81,7 +81,7 @@ export class UserController {
         throw new UnauthorizedException()
       }
     } else {
-      return res.status(HttpStatus.OK).json()
+      return res.status(HttpStatus.OK).json(req)
     }
   }
 
