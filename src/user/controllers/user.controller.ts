@@ -81,7 +81,8 @@ export class UserController {
         throw new UnauthorizedException()
       }
     } else {
-      return res.status(HttpStatus.OK).json(req.cookies)
+      const name = 'pepe'
+      return res.status(HttpStatus.OK).json({ name })
     }
   }
 
