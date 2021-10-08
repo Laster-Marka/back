@@ -9,7 +9,7 @@ async function bootstrap() {
   app.use(cookieParser())
   app.enableCors({
     credentials: true,
-    origin: 'https://laster-marka.herokuapp.com'
+    origin: [/^(.*)/]
   })
   await app.listen(process.env.PORT || 4000)
 }
