@@ -10,6 +10,7 @@ export class AppController {
 
   @Get('home')
   async data(@Res() res: Response, @Req() req) {
+    res.setHeader('Access-Control-Allow-Origin', 'https://laster-marka.herokuapp.com')
     const cookie = req.cookies['jwt']
     if(cookie) {
       const name = await this.userService.verifyToken(cookie)

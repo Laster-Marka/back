@@ -46,6 +46,7 @@ export class UserController {
 
   @Post('login')
   async logIn(@Res({passthrough:true}) res: Response, @Body('getUserDto') getUserDto: GetUserDto) {
+    res.setHeader('Access-Control-Allow-Origin', 'https://laster-marka.herokuapp.com')
     const user: IUser = await this.userService.getByEmail(getUserDto.email)
     if (user) {
       const isCorrectPassword = await user.comparePassword(getUserDto.password)
