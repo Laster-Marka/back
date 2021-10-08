@@ -70,6 +70,7 @@ export class UserController {
 
   @Get()
   async get(@Req() req: Request, @Res() res: Response) {
+    res.setHeader('Access-Control-Allow-Origin', 'https://laster-marka.herokuapp.com')
     const cookie = req.cookies['jwt']
     if(cookie) {
       try {
