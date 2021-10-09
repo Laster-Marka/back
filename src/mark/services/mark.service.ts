@@ -1,12 +1,11 @@
-import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model, ObjectId } from 'mongoose';
-import { IMark } from '../interfaces/mark.interface';
-import { EditMarkDto } from '../dto/edit-mark.dto';
-import { ITag } from '../interfaces/tag.interface';
-import { IType } from '../interfaces/type.interface';
-import { ICreateMark } from '../interfaces/create-mark.interface';
-import { IEditMark } from '../interfaces/edit-mark.interface';
+import { Injectable } from '@nestjs/common'
+import { InjectModel } from '@nestjs/mongoose'
+import { Model, ObjectId } from 'mongoose'
+import { IMark } from '../interfaces/mark.interface'
+import { ITag } from '../interfaces/tag.interface'
+import { IType } from '../interfaces/type.interface'
+import { ICreateMark } from '../interfaces/create-mark.interface'
+import { IEditMark } from '../interfaces/edit-mark.interface'
 
 @Injectable()
 export class MarkService {
@@ -18,11 +17,14 @@ export class MarkService {
 
   async create(createMark: ICreateMark): Promise<IMark> {
     const mark = new this.markModel(createMark)
-    return mark.save()
-   }
+    return await mark.save()
+  }
 
   async get(id: ObjectId): Promise<IMark> {
-    const mark: IMark = await this.markModel.findOne({ _id: id })
+    const mark: IMark = await this.markModel
+      .findOne({ _id: id })
+      .populate({ path: 'type', select: 'name -_id' })
+      .populate({ path: 'tags', select: 'name -_id' })
     if (!mark) {
       //return "Mark not found"
     }
@@ -30,14 +32,28 @@ export class MarkService {
   }
 
   async edit(id: ObjectId, editMark: IEditMark): Promise<IMark> {
-    const mark = await this.markModel.findByIdAndUpdate({ _id: id  }, { title: editMark.title, link: editMark.link, markdown: editMark.markdown, description: editMark.description, image: editMark.image, type: editMark.type, tags: editMark.tags  }, {new: true})
+    const mark = await this.markModel
+      .findByIdAndUpdate(
+        { _id: id },
+        {
+          title: editMark.title,
+          link: editMark.link,
+          markdown: editMark.markdown,
+          description: editMark.description,
+          image: editMark.image,
+          type: editMark.type,
+          tags: editMark.tags
+        },
+        { new: true }
+      )
+      .populate({ path: 'type', select: 'name -_id' })
+      .populate({ path: 'tags', select: 'name -_id' })
     if (!mark) {
-
     }
     return mark
   }
 
-  async delete(id: ObjectId): Promise<{ ok?: number; n?: number; } & { deletedCount?: number; }> {
+  async delete(id: ObjectId): Promise<{ ok?: number; n?: number } & { deletedCount?: number }> {
     const response = await this.markModel.deleteOne({ _id: id })
     return response
   }

@@ -78,10 +78,12 @@ export class UserService {
         path: 'marks',
         populate: [
           {
-            path: 'tags'
+            path: 'tags',
+            select: 'name -_id'
           },
           {
-            path: 'type'
+            path: 'type',
+            select: 'name -_id'
           }
         ]
       }

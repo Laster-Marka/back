@@ -40,6 +40,7 @@ export class UserController {
 
   @Post('signup')
   async signUp(@Res() res: Response, @Body('createUserDto') createUserDto: CreateUserDto): Promise<Response> {
+    res.setHeader('Access-Control-Allow-Origin', 'https://laster-marka.herokuapp.com')
     const user: IUser = await this.userService.signup(createUserDto)
     return res.status(HttpStatus.CREATED).json({ user })
   }
@@ -70,6 +71,7 @@ export class UserController {
 
   @Post('logout')
   async logOut(@Res() res: Response) {
+    res.setHeader('Access-Control-Allow-Origin', 'https://laster-marka.herokuapp.com')
     res.clearCookie('jwt')
     return res.status(HttpStatus.OK).json()
   }
@@ -92,6 +94,7 @@ export class UserController {
 
   @Put()
   async edit(@Req() req: Request, @Res() res: Response, @Body('editUserDto') editUserDto: EditUserDto) {
+    res.setHeader('Access-Control-Allow-Origin', 'https://laster-marka.herokuapp.com')
     const cookie = req.cookies['jwt']
     const name: string = await this.getUserFromCookie(cookie)
     const user: IUser = await this.userService.edit(name, editUserDto)
@@ -100,6 +103,7 @@ export class UserController {
 
   @Put('/password')
   async editPassword(@Req() req: Request, @Res() res: Response, @Body('editPasswordDto') editPasswordDto: EditPasswordDto) {
+    res.setHeader('Access-Control-Allow-Origin', 'https://laster-marka.herokuapp.com')
     const cookie = req.cookies['jwt']
     const name: string = await this.getUserFromCookie(cookie)
     const user: IUser = await this.userService.editPassword(name, editPasswordDto)
@@ -108,6 +112,7 @@ export class UserController {
 
   @Delete()
   async delete(@Req() req: Request, @Res() res: Response): Promise<Response> {
+    res.setHeader('Access-Control-Allow-Origin', 'https://laster-marka.herokuapp.com')
     const cookie = req.cookies['jwt']
     const name: string = await this.getUserFromCookie(cookie)
     const response: { ok?: number; n?: number } & { deletedCount?: number; } = await this.userService.delete(name)

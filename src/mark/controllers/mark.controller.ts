@@ -15,7 +15,6 @@ import { Request, Response } from 'express';
 import { MarkService } from '../services/mark.service';
 import { CreateMarkDto } from '../dto/create-mark.dto';
 import { IMark } from '../interfaces/mark.interface';
-import { EditFolderDto } from '../../folder/dto/edit-folder.dto';
 import { EditMarkDto } from '../dto/edit-mark.dto';
 import { ObjectId } from 'mongoose';
 import { FolderService } from '../../folder/services/folder.service';
