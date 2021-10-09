@@ -72,7 +72,12 @@ export class UserController {
   @Post('logout')
   async logOut(@Res() res: Response) {
     res.setHeader('Access-Control-Allow-Origin', 'https://laster-marka.herokuapp.com')
-    res.clearCookie('jwt')
+    res.clearCookie('jwt', {
+      sameSite: 'none',
+      secure: true,
+      path: '/',
+      httpOnly: true
+    })
     return res.status(HttpStatus.OK).json()
   }
 
