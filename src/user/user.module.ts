@@ -1,16 +1,16 @@
-import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common'
 import { UserService } from './services/user.service'
-import { InjectModel, MongooseModule } from '@nestjs/mongoose';
+import { InjectModel, MongooseModule } from '@nestjs/mongoose'
 import { UserSchema } from './models/user.model'
 import { CountrySchema } from './models/country.model'
 import { ConfigSchema } from './models/config.model'
 import { RoleSchema } from './models/role.model'
 import { UserController } from './controllers/user.controller'
-import { JwtModule, JwtService } from '@nestjs/jwt';
-import { TokenMiddleware } from './middlewares/token.middleware';
-import { jwtConstants } from './middlewares/constants';
-import { Model } from 'mongoose';
-import { IUser } from './interfaces/user.interface';
+import { JwtModule, JwtService } from '@nestjs/jwt'
+import { TokenMiddleware } from './middlewares/token.middleware'
+import { jwtConstants } from './middlewares/constants'
+import { Model } from 'mongoose'
+import { IUser } from './interfaces/user.interface'
 
 @Module({
   imports: [

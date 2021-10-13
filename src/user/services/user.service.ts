@@ -1,12 +1,12 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 import { CreateUserDto } from '../dto/create-user.dto'
 import { EditUserDto } from '../dto/edit-user.dto'
 import { EditPasswordDto } from '../dto/edit-password.dto'
 import { IUser } from '../interfaces/user.interface'
-import { Model, ObjectId } from 'mongoose';
-import { JwtService } from '@nestjs/jwt';
-import { IFolder } from '../../folder/interfaces/folder.interface';
+import { Model, ObjectId } from 'mongoose'
+import { JwtService } from '@nestjs/jwt'
+import { IFolder } from '../../folder/interfaces/folder.interface'
 
 @Injectable()
 export class UserService {
@@ -48,25 +48,32 @@ export class UserService {
   }
 
   async edit(name: string, editUserDto: EditUserDto): Promise<IUser> {
-    const user = await this.userModel.findOneAndUpdate({ name: name  }, { nickname: editUserDto.nickname, profilePic: editUserDto.profilePic  }, {new: true})
+    const user = await this.userModel.findOneAndUpdate(
+      { name: name },
+      { nickname: editUserDto.nickname, profilePic: editUserDto.profilePic },
+      { new: true }
+    )
     if (!user) {
-
     }
     return user
   }
 
   async editPassword(name: string, editPasswordDto: EditPasswordDto): Promise<IUser | null> {
-    if (editPasswordDto.oldPassword !== editPasswordDto.oldConfirmPassword){
+    if (editPasswordDto.oldPassword !== editPasswordDto.oldConfirmPassword) {
       return null
     }
-    const user: IUser | null = await this.userModel.findOneAndUpdate({ name: name }, { password: editPasswordDto.newPassword }, {new: true})
+    const user: IUser | null = await this.userModel.findOneAndUpdate(
+      { name: name },
+      { password: editPasswordDto.newPassword },
+      { new: true }
+    )
     if (!user) {
       return null
     }
     return user
   }
 
-  async delete(name: string): Promise<{ ok?: number; n?: number; } & { deletedCount?: number; }> {
+  async delete(name: string): Promise<{ ok?: number; n?: number } & { deletedCount?: number }> {
     const response = await this.userModel.deleteOne({ name: name })
     return response
   }
@@ -93,7 +100,11 @@ export class UserService {
   }
 
   async addFolder(name: string, id: ObjectId): Promise<void> {
-    const user: IUser = await this.userModel.findOneAndUpdate({ name: name },{ $push: {folders: id} }, {new: true})
+    const user: IUser = await this.userModel.findOneAndUpdate(
+      { name: name },
+      { $push: { folders: id } },
+      { new: true }
+    )
   }
 
   async deleteFolderRef(id: any): Promise<void> {

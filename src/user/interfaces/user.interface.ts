@@ -1,8 +1,8 @@
 import { Document } from 'mongoose'
-import { IRole } from './role.interface';
-import { IFolder } from '../../folder/interfaces/folder.interface';
-import { ICountry } from './country.interface';
-import { IConfig } from './config.interface';
+import { IRole } from './role.interface'
+import { IFolder } from '../../folder/interfaces/folder.interface'
+import { ICountry } from './country.interface'
+import { IConfig } from './config.interface'
 
 export interface IUser extends Document {
   name: string

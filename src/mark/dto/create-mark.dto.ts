@@ -1,5 +1,5 @@
-import { IType } from '../interfaces/type.interface';
-import { ITag } from '../interfaces/tag.interface';
+import { IType } from '../interfaces/type.interface'
+import { ITag } from '../interfaces/tag.interface'
 
 export class CreateMarkDto {
   readonly title: string

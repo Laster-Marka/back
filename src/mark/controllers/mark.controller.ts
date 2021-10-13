@@ -7,28 +7,28 @@ import {
   HttpStatus,
   Param,
   Post,
-  Put, Req,
+  Put,
+  Req,
   Res,
-  UnauthorizedException,
-} from '@nestjs/common';
-import { Request, Response } from 'express';
-import { MarkService } from '../services/mark.service';
-import { CreateMarkDto } from '../dto/create-mark.dto';
-import { IMark } from '../interfaces/mark.interface';
-import { EditMarkDto } from '../dto/edit-mark.dto';
-import { ObjectId } from 'mongoose';
-import { FolderService } from '../../folder/services/folder.service';
-import { ITag } from '../interfaces/tag.interface';
-import { IType } from '../interfaces/type.interface';
-import { CreateMarkDtoToMarkMapper } from '../dto/create-mark-dto-to-mark';
-import { ICreateMark } from '../interfaces/create-mark.interface';
-import { UserService } from '../../user/services/user.service';
-import { IEditMark } from '../interfaces/edit-mark.interface';
-import { EditMarkDtoToMarkMapper } from '../dto/edit-mark-dto-to-mark';
+  UnauthorizedException
+} from '@nestjs/common'
+import { Request, Response } from 'express'
+import { MarkService } from '../services/mark.service'
+import { CreateMarkDto } from '../dto/create-mark.dto'
+import { IMark } from '../interfaces/mark.interface'
+import { EditMarkDto } from '../dto/edit-mark.dto'
+import { ObjectId } from 'mongoose'
+import { FolderService } from '../../folder/services/folder.service'
+import { ITag } from '../interfaces/tag.interface'
+import { IType } from '../interfaces/type.interface'
+import { CreateMarkDtoToMarkMapper } from '../dto/create-mark-dto-to-mark'
+import { ICreateMark } from '../interfaces/create-mark.interface'
+import { UserService } from '../../user/services/user.service'
+import { IEditMark } from '../interfaces/edit-mark.interface'
+import { EditMarkDtoToMarkMapper } from '../dto/edit-mark-dto-to-mark'
 
 @Controller('mark')
 export class MarkController {
-
   constructor(
     private readonly markService: MarkService,
     private readonly folderService: FolderService,
@@ -48,7 +48,12 @@ export class MarkController {
   }
 
   @Post()
-  async create(@Req() req: Request, @Res() res: Response, @Body('folderId') folderId: string, @Body('createMarkDto') createMarkDto: CreateMarkDto): Promise<Response> {
+  async create(
+    @Req() req: Request,
+    @Res() res: Response,
+    @Body('folderId') folderId: string,
+    @Body('createMarkDto') createMarkDto: CreateMarkDto
+  ): Promise<Response> {
     res.setHeader('Access-Control-Allow-Origin', 'https://laster-marka.herokuapp.com')
     const cookie = req.cookies['jwt']
     await this.getUserFromCookie(cookie)
@@ -71,7 +76,12 @@ export class MarkController {
   }
 
   @Put(':id')
-  async edit(@Req() req: Request, @Res() res: Response, @Param('id') id: ObjectId, @Body('editMarkDto') editMarkDto: EditMarkDto): Promise<Response> {
+  async edit(
+    @Req() req: Request,
+    @Res() res: Response,
+    @Param('id') id: ObjectId,
+    @Body('editMarkDto') editMarkDto: EditMarkDto
+  ): Promise<Response> {
     res.setHeader('Access-Control-Allow-Origin', 'https://laster-marka.herokuapp.com')
     const cookie = req.cookies['jwt']
     await this.getUserFromCookie(cookie)
@@ -83,11 +93,16 @@ export class MarkController {
   }
 
   @Delete(':id')
-  async delete(@Req() req: Request, @Res() res: Response, @Param('id') id: ObjectId): Promise<Response> {
+  async delete(
+    @Req() req: Request,
+    @Res() res: Response,
+    @Param('id') id: ObjectId
+  ): Promise<Response> {
     res.setHeader('Access-Control-Allow-Origin', 'https://laster-marka.herokuapp.com')
     const cookie = req.cookies['jwt']
     await this.getUserFromCookie(cookie)
-    const response: { ok?: number; n?: number; } & { deletedCount?: number; } = await this.markService.delete(id)
+    const response: { ok?: number; n?: number } & { deletedCount?: number } =
+      await this.markService.delete(id)
     await this.folderService.deleteMarkRef(id)
     return res.status(HttpStatus.OK).json({ response })
   }

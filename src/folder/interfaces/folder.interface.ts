@@ -1,5 +1,5 @@
 import { Document } from 'mongoose'
-import { IColor } from './color.interface';
+import { IColor } from './color.interface'
 
 export interface IFolder extends Document {
   name: string

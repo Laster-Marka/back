@@ -1,4 +1,4 @@
-import { IColor } from '../interfaces/color.interface';
+import { IColor } from '../interfaces/color.interface'
 
 export class CreateFolderDto {
   readonly name: string

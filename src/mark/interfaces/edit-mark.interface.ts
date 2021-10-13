@@ -1,5 +1,5 @@
-import { IType } from './type.interface';
-import { ITag } from './tag.interface';
+import { IType } from './type.interface'
+import { ITag } from './tag.interface'
 
 export interface IEditMark {
   title: string

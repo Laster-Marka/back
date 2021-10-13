@@ -9,20 +9,19 @@ import {
   Put,
   Req,
   Res,
-  UnauthorizedException,
-} from '@nestjs/common';
-import { Request, Response } from 'express';
-import { IFolder } from '../interfaces/folder.interface';
-import { FolderService } from '../services/folder.service';
-import { CreateFolderDto } from '../dto/create-folder.dto';
-import { EditFolderDto } from '../dto/edit-folder.dto';
-import { ObjectId } from 'mongoose';
-import { UserService } from '../../user/services/user.service';
-import { IUser } from '../../user/interfaces/user.interface';
+  UnauthorizedException
+} from '@nestjs/common'
+import { Request, Response } from 'express'
+import { IFolder } from '../interfaces/folder.interface'
+import { FolderService } from '../services/folder.service'
+import { CreateFolderDto } from '../dto/create-folder.dto'
+import { EditFolderDto } from '../dto/edit-folder.dto'
+import { ObjectId } from 'mongoose'
+import { UserService } from '../../user/services/user.service'
+import { IUser } from '../../user/interfaces/user.interface'
 
 @Controller('folder')
 export class FolderController {
-
   constructor(
     private readonly folderService: FolderService,
     private readonly userService: UserService
@@ -40,7 +39,11 @@ export class FolderController {
   }
 
   @Post()
-  async create(@Req() req: Request, @Res() res: Response, @Body('createFolderDto') createFolderDto: CreateFolderDto): Promise<Response> {
+  async create(
+    @Req() req: Request,
+    @Res() res: Response,
+    @Body('createFolderDto') createFolderDto: CreateFolderDto
+  ): Promise<Response> {
     res.setHeader('Access-Control-Allow-Origin', 'https://laster-marka.herokuapp.com')
     const cookie = req.cookies['jwt']
     const name: string = await this.getUserFromCookie(cookie)
@@ -50,7 +53,11 @@ export class FolderController {
   }
 
   @Get(':id')
-  async get(@Req() req: Request, @Res() res: Response, @Param('id') id: ObjectId): Promise<Response> {
+  async get(
+    @Req() req: Request,
+    @Res() res: Response,
+    @Param('id') id: ObjectId
+  ): Promise<Response> {
     res.setHeader('Access-Control-Allow-Origin', 'https://laster-marka.herokuapp.com')
     const cookie = req.cookies['jwt']
     const name: string = await this.getUserFromCookie(cookie)
@@ -59,7 +66,12 @@ export class FolderController {
   }
 
   @Put(':id')
-  async edit(@Req() req: Request, @Res() res: Response, @Param('id') id: ObjectId, @Body('editFolderDto') editFolderDto: EditFolderDto): Promise<Response> {
+  async edit(
+    @Req() req: Request,
+    @Res() res: Response,
+    @Param('id') id: ObjectId,
+    @Body('editFolderDto') editFolderDto: EditFolderDto
+  ): Promise<Response> {
     res.setHeader('Access-Control-Allow-Origin', 'https://laster-marka.herokuapp.com')
     const cookie = req.cookies['jwt']
     const name: string = await this.getUserFromCookie(cookie)
@@ -68,7 +80,11 @@ export class FolderController {
   }
 
   @Delete(':id')
-  async delete(@Req() req: Request, @Res() res: Response, @Param('id') id: ObjectId): Promise<Response> {
+  async delete(
+    @Req() req: Request,
+    @Res() res: Response,
+    @Param('id') id: ObjectId
+  ): Promise<Response> {
     res.setHeader('Access-Control-Allow-Origin', 'https://laster-marka.herokuapp.com')
     const cookie = req.cookies['jwt']
     const name: string = await this.getUserFromCookie(cookie)

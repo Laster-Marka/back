@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 import { Document, Schema as MongoSchema } from 'mongoose'
-import { IType } from '../interfaces/type.interface';
-import { ITag } from '../interfaces/tag.interface';
+import { IType } from '../interfaces/type.interface'
+import { ITag } from '../interfaces/tag.interface'
 
 @Schema({ timestamps: true, versionKey: false })
 export class Mark<IMark> {
@@ -25,7 +25,6 @@ export class Mark<IMark> {
 
   @Prop({ type: [{ type: MongoSchema.Types.ObjectId, ref: 'Tag' }] })
   tags: ITag[]
-
 }
 
 export const MarkSchema = SchemaFactory.createForClass(Mark)

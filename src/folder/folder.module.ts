@@ -1,11 +1,11 @@
-import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
-import { FolderController } from './controllers/folder.controller';
-import { FolderService } from './services/folder.service';
-import { MongooseModule } from '@nestjs/mongoose';
-import { FolderSchema } from './models/folder.model';
-import { ColorSchema } from './models/color.model';
-import { UserModule } from '../user/user.module';
-import { TokenMiddleware } from '../user/middlewares/token.middleware';
+import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common'
+import { FolderController } from './controllers/folder.controller'
+import { FolderService } from './services/folder.service'
+import { MongooseModule } from '@nestjs/mongoose'
+import { FolderSchema } from './models/folder.model'
+import { ColorSchema } from './models/color.model'
+import { UserModule } from '../user/user.module'
+import { TokenMiddleware } from '../user/middlewares/token.middleware'
 
 @Module({
   imports: [

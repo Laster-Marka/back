@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
-import { Document, Schema as MongoSchema } from 'mongoose';
-import { IColor } from '../interfaces/color.interface';
-import { IMark } from '../../mark/interfaces/mark.interface';
+import { Document, Schema as MongoSchema } from 'mongoose'
+import { IColor } from '../interfaces/color.interface'
+import { IMark } from '../../mark/interfaces/mark.interface'
 
 @Schema({ timestamps: true, versionKey: false })
 export class Folder<IFolder> {
@@ -16,7 +16,6 @@ export class Folder<IFolder> {
 
   @Prop({ type: [{ type: MongoSchema.Types.ObjectId, ref: 'Mark' }] })
   marks: IMark[]
-
 }
 
 export const FolderSchema = SchemaFactory.createForClass(Folder)

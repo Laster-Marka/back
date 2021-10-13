@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
-import { Document, Schema as MongoSchema } from 'mongoose';
+import { Document, Schema as MongoSchema } from 'mongoose'
 import { IUser } from '../interfaces/user.interface'
 import { IRole } from '../interfaces/role.interface'
 import { ICountry } from '../interfaces/country.interface'
