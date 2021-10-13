@@ -57,13 +57,23 @@ export class MarkController {
     res.setHeader('Access-Control-Allow-Origin', 'https://laster-marka.herokuapp.com')
     const cookie = req.cookies['jwt']
     await this.getUserFromCookie(cookie)
-    const tags: ITag[] = await this.getTagIds(createMarkDto.tags)
-    const type: IType = await this.getTypeId(createMarkDto.type)
-    const createMark: ICreateMark = this.createMarkDtoToMarkMapper.map(createMarkDto, tags, type)
-    const mark: IMark = await this.markService.create(createMark)
-    await this.folderService.addMark(folderId, mark._id)
-    //TODO: Return mark
-    return res.status(HttpStatus.CREATED).json({ mark })
+    if (folderId && createMarkDto) {
+      try {
+        const tags: ITag[] = await this.getTagIds(createMarkDto.tags)
+        const type: IType = await this.getTypeId(createMarkDto.type)
+        const createMark: ICreateMark = this.createMarkDtoToMarkMapper.map(
+          createMarkDto,
+          tags,
+          type
+        )
+        const mark: IMark = await this.markService.create(createMark)
+        await this.folderService.addMark(folderId, mark._id)
+        return res.status(HttpStatus.CREATED).json({ mark })
+      } catch (e) {
+        return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ e })
+      }
+    }
+    return res.status(HttpStatus.BAD_REQUEST).json({})
   }
 
   @Get(':id')
@@ -71,8 +81,15 @@ export class MarkController {
     res.setHeader('Access-Control-Allow-Origin', 'https://laster-marka.herokuapp.com')
     const cookie = req.cookies['jwt']
     await this.getUserFromCookie(cookie)
-    const mark: IMark = await this.markService.get(id)
-    return res.status(HttpStatus.OK).json({ mark })
+    if (id) {
+      try {
+        const mark: IMark = await this.markService.get(id)
+        return res.status(HttpStatus.OK).json({ mark })
+      } catch (e) {
+        return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ e })
+      }
+    }
+    return res.status(HttpStatus.BAD_REQUEST).json({})
   }
 
   @Put(':id')
@@ -85,11 +102,18 @@ export class MarkController {
     res.setHeader('Access-Control-Allow-Origin', 'https://laster-marka.herokuapp.com')
     const cookie = req.cookies['jwt']
     await this.getUserFromCookie(cookie)
-    const tags = await this.getTagIds(editMarkDto.tags)
-    const type: IType = await this.getTypeId(editMarkDto.type)
-    const editMark: IEditMark = this.editMarkDtoToMarkMapper.map(editMarkDto, tags, type)
-    const mark: IMark = await this.markService.edit(id, editMark)
-    return res.status(HttpStatus.OK).json({ mark })
+    if (id && editMarkDto) {
+      try {
+        const tags = await this.getTagIds(editMarkDto.tags)
+        const type: IType = await this.getTypeId(editMarkDto.type)
+        const editMark: IEditMark = this.editMarkDtoToMarkMapper.map(editMarkDto, tags, type)
+        const mark: IMark = await this.markService.edit(id, editMark)
+        return res.status(HttpStatus.OK).json({ mark })
+      } catch (e) {
+        return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ e })
+      }
+    }
+    return res.status(HttpStatus.BAD_REQUEST).json({})
   }
 
   @Delete(':id')
@@ -101,10 +125,20 @@ export class MarkController {
     res.setHeader('Access-Control-Allow-Origin', 'https://laster-marka.herokuapp.com')
     const cookie = req.cookies['jwt']
     await this.getUserFromCookie(cookie)
-    const response: { ok?: number; n?: number } & { deletedCount?: number } =
-      await this.markService.delete(id)
-    await this.folderService.deleteMarkRef(id)
-    return res.status(HttpStatus.OK).json({ response })
+    if (id) {
+      try {
+        const response: { ok?: number; n?: number } & { deletedCount?: number } =
+          await this.markService.delete(id)
+        if (response.ok === 1) {
+          await this.folderService.deleteMarkRef(id)
+          return res.status(HttpStatus.OK).json({})
+        }
+        return res.status(HttpStatus.NOT_MODIFIED).json({})
+      } catch (e) {
+        return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ e })
+      }
+    }
+    return res.status(HttpStatus.BAD_REQUEST).json({})
   }
 
   private async getTagIds(tags: ITag[]): Promise<ITag[]> {

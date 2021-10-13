@@ -6,24 +6,21 @@ import {
   Post,
   Res,
   Put,
-  Param,
   Delete,
   Req,
   UnauthorizedException
 } from '@nestjs/common'
-import { json, Request, Response } from 'express'
+import { Request, Response } from 'express'
 import { UserService } from '../services/user.service'
 import { CreateUserDto } from '../dto/create-user.dto'
 import { EditUserDto } from '../dto/edit-user.dto'
 import { EditPasswordDto } from '../dto/edit-password.dto'
 import { GetUserDto } from '../dto/get-user.dto'
 import { IUser } from '../interfaces/user.interface'
-import { JwtService } from '@nestjs/jwt'
 
 @Controller('user')
 export class UserController {
-  constructor(private readonly userService: UserService) //private readonly jwtService: JwtService
-  {}
+  constructor(private readonly userService: UserService) {}
 
   private async getUserFromCookie(cookie): Promise<string> {
     if (!cookie) {
@@ -42,8 +39,11 @@ export class UserController {
     @Body('createUserDto') createUserDto: CreateUserDto
   ): Promise<Response> {
     res.setHeader('Access-Control-Allow-Origin', 'https://laster-marka.herokuapp.com')
-    const user: IUser = await this.userService.signup(createUserDto)
-    return res.status(HttpStatus.CREATED).json({ user })
+    if (createUserDto) {
+      const user: IUser = await this.userService.signup(createUserDto)
+      return res.status(HttpStatus.CREATED).json({ user })
+    }
+    return res.status(HttpStatus.BAD_REQUEST).json({})
   }
 
   @Post('login')
@@ -89,15 +89,11 @@ export class UserController {
   async get(@Req() req: Request, @Res() res: Response) {
     res.setHeader('Access-Control-Allow-Origin', 'https://laster-marka.herokuapp.com')
     const cookie = req.cookies.jwt
-    if (cookie) {
-      try {
-        const name: string = await this.getUserFromCookie(cookie)
-        res.status(HttpStatus.OK).json({ name })
-      } catch (e) {
-        throw new UnauthorizedException()
-      }
-    } else {
-      return res.status(HttpStatus.NO_CONTENT).json(req.cookies)
+    try {
+      const name: string = await this.getUserFromCookie(cookie)
+      res.status(HttpStatus.OK).json({ name })
+    } catch (e) {
+      throw new UnauthorizedException()
     }
   }
 
@@ -110,8 +106,15 @@ export class UserController {
     res.setHeader('Access-Control-Allow-Origin', 'https://laster-marka.herokuapp.com')
     const cookie = req.cookies['jwt']
     const name: string = await this.getUserFromCookie(cookie)
-    const user: IUser = await this.userService.edit(name, editUserDto)
-    return res.status(HttpStatus.OK).json({ user })
+    if (editUserDto) {
+      try {
+        await this.userService.edit(name, editUserDto)
+        return res.status(HttpStatus.OK).json({})
+      } catch (e) {
+        return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ e })
+      }
+    }
+    return res.status(HttpStatus.BAD_REQUEST).json({})
   }
 
   @Put('/password')
@@ -123,8 +126,15 @@ export class UserController {
     res.setHeader('Access-Control-Allow-Origin', 'https://laster-marka.herokuapp.com')
     const cookie = req.cookies['jwt']
     const name: string = await this.getUserFromCookie(cookie)
-    const user: IUser = await this.userService.editPassword(name, editPasswordDto)
-    return res.status(HttpStatus.OK).json({ user })
+    if (editPasswordDto) {
+      try {
+        const user: IUser = await this.userService.editPassword(name, editPasswordDto)
+        return res.status(HttpStatus.OK).json({ user })
+      } catch (e) {
+        return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ e })
+      }
+    }
+    return res.status(HttpStatus.BAD_REQUEST).json({})
   }
 
   @Delete()
@@ -132,8 +142,15 @@ export class UserController {
     res.setHeader('Access-Control-Allow-Origin', 'https://laster-marka.herokuapp.com')
     const cookie = req.cookies['jwt']
     const name: string = await this.getUserFromCookie(cookie)
-    const response: { ok?: number; n?: number } & { deletedCount?: number } =
-      await this.userService.delete(name)
-    return res.status(HttpStatus.OK).json({ response })
+    try {
+      const response: { ok?: number; n?: number } & { deletedCount?: number } =
+        await this.userService.delete(name)
+      if (response.ok === 1) {
+        return res.status(HttpStatus.OK).json({ response })
+      }
+      return res.status(HttpStatus.NOT_MODIFIED).json({})
+    } catch (e) {
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ e })
+    }
   }
 }

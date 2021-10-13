@@ -18,7 +18,6 @@ import { CreateFolderDto } from '../dto/create-folder.dto'
 import { EditFolderDto } from '../dto/edit-folder.dto'
 import { ObjectId } from 'mongoose'
 import { UserService } from '../../user/services/user.service'
-import { IUser } from '../../user/interfaces/user.interface'
 
 @Controller('folder')
 export class FolderController {
@@ -47,9 +46,12 @@ export class FolderController {
     res.setHeader('Access-Control-Allow-Origin', 'https://laster-marka.herokuapp.com')
     const cookie = req.cookies['jwt']
     const name: string = await this.getUserFromCookie(cookie)
-    const folder: IFolder = await this.folderService.create(createFolderDto)
-    await this.userService.addFolder(name, folder._id)
-    return res.status(HttpStatus.CREATED).json({ folder })
+    if (createFolderDto) {
+      const folder: IFolder = await this.folderService.create(createFolderDto)
+      await this.userService.addFolder(name, folder._id)
+      return res.status(HttpStatus.CREATED).json({ folder })
+    }
+    return res.status(HttpStatus.BAD_REQUEST).json({})
   }
 
   @Get(':id')
@@ -60,9 +62,12 @@ export class FolderController {
   ): Promise<Response> {
     res.setHeader('Access-Control-Allow-Origin', 'https://laster-marka.herokuapp.com')
     const cookie = req.cookies['jwt']
-    const name: string = await this.getUserFromCookie(cookie)
-    const folder: IFolder = await this.folderService.get(id)
-    return res.status(HttpStatus.CREATED).json({ folder })
+    await this.getUserFromCookie(cookie)
+    if (id) {
+      const folder: IFolder = await this.folderService.get(id)
+      return res.status(HttpStatus.CREATED).json({ folder })
+    }
+    return res.status(HttpStatus.BAD_REQUEST).json({})
   }
 
   @Put(':id')
@@ -74,9 +79,12 @@ export class FolderController {
   ): Promise<Response> {
     res.setHeader('Access-Control-Allow-Origin', 'https://laster-marka.herokuapp.com')
     const cookie = req.cookies['jwt']
-    const name: string = await this.getUserFromCookie(cookie)
-    const folder: IFolder = await this.folderService.edit(id, editFolderDto)
-    return res.status(HttpStatus.OK).json({ folder })
+    await this.getUserFromCookie(cookie)
+    if (id && editFolderDto) {
+      const folder: IFolder = await this.folderService.edit(id, editFolderDto)
+      return res.status(HttpStatus.OK).json({ folder })
+    }
+    return res.status(HttpStatus.BAD_REQUEST).json({})
   }
 
   @Delete(':id')
@@ -87,9 +95,16 @@ export class FolderController {
   ): Promise<Response> {
     res.setHeader('Access-Control-Allow-Origin', 'https://laster-marka.herokuapp.com')
     const cookie = req.cookies['jwt']
-    const name: string = await this.getUserFromCookie(cookie)
-    const response: any = await this.folderService.delete(id)
-    await this.userService.deleteFolderRef(id)
-    return res.status(HttpStatus.OK).json({ response })
+    await this.getUserFromCookie(cookie)
+    if (id) {
+      const response: { ok?: number; n?: number } & { deletedCount?: number } =
+        await this.folderService.delete(id)
+      if (response.ok === 1) {
+        await this.userService.deleteFolderRef(id)
+        return res.status(HttpStatus.OK).json({ response })
+      }
+      return res.status(HttpStatus.NOT_MODIFIED).json({})
+    }
+    return res.status(HttpStatus.BAD_REQUEST).json({})
   }
 }
