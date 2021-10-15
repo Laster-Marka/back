@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
-import { Document, Schema as MongoSchema } from 'mongoose'
+import { Schema as MongoSchema } from 'mongoose'
 import { IType } from '../interfaces/type.interface'
 import { ITag } from '../interfaces/tag.interface'
 
@@ -8,7 +8,7 @@ export class Mark<IMark> {
   @Prop()
   title: string
 
-  @Prop({ required: true })
+  @Prop()
   link: string
 
   @Prop()
