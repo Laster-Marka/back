@@ -66,7 +66,7 @@ export class UserController {
         })
         return token
       } else {
-        res.status(HttpStatus.BAD_REQUEST).json({ error: 'Wrong credentials' })
+        res.status(HttpStatus.BAD_REQUEST).json({ message: 'Wrong credentials' })
       }
     } else {
       res.status(HttpStatus.BAD_REQUEST).json({ error: 'Wrong credentials' })
