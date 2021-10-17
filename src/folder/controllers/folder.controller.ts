@@ -49,9 +49,9 @@ export class FolderController {
     if (createFolderDto) {
       const folder: IFolder = await this.folderService.create(createFolderDto)
       await this.userService.addFolder(name, folder._id)
-      return res.status(HttpStatus.CREATED).json({ folder })
+      return res.status(HttpStatus.CREATED).json({})
     }
-    return res.status(HttpStatus.BAD_REQUEST).json({})
+    return res.status(HttpStatus.BAD_REQUEST).json({ message: 'Bad request' })
   }
 
   @Get(':id')
@@ -67,7 +67,7 @@ export class FolderController {
       const folder: IFolder = await this.folderService.get(id)
       return res.status(HttpStatus.CREATED).json({ folder })
     }
-    return res.status(HttpStatus.BAD_REQUEST).json({})
+    return res.status(HttpStatus.BAD_REQUEST).json({ message: 'Bad request' })
   }
 
   @Put(':id')
@@ -84,7 +84,7 @@ export class FolderController {
       const folder: IFolder = await this.folderService.edit(id, editFolderDto)
       return res.status(HttpStatus.OK).json({ folder })
     }
-    return res.status(HttpStatus.BAD_REQUEST).json({})
+    return res.status(HttpStatus.BAD_REQUEST).json({ message: 'Bad request' })
   }
 
   @Delete(':id')
@@ -97,14 +97,20 @@ export class FolderController {
     const cookie = req.cookies['jwt']
     await this.getUserFromCookie(cookie)
     if (id) {
-      const response: { ok?: number; n?: number } & { deletedCount?: number } =
-        await this.folderService.delete(id)
-      if (response.ok === 1) {
-        await this.userService.deleteFolderRef(id)
-        return res.status(HttpStatus.OK).json({ response })
+      try {
+        const response: { ok?: number; n?: number } & { deletedCount?: number } =
+          await this.folderService.delete(id)
+        if (response.ok === 1) {
+          await this.userService.deleteFolderRef(id)
+          return res.status(HttpStatus.OK).json({})
+        }
+        return res.status(HttpStatus.CONFLICT).json({ message: 'Folder has not been deleted' })
+      } catch (e) {
+        return res
+          .status(HttpStatus.INTERNAL_SERVER_ERROR)
+          .json({ message: 'Internal server error' })
       }
-      return res.status(HttpStatus.NOT_MODIFIED).json({})
     }
-    return res.status(HttpStatus.BAD_REQUEST).json({})
+    return res.status(HttpStatus.BAD_REQUEST).json({ message: 'Bad request' })
   }
 }

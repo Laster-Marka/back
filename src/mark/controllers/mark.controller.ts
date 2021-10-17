@@ -3,7 +3,6 @@ import {
   Controller,
   Delete,
   Get,
-  Headers,
   HttpStatus,
   Param,
   Post,
@@ -68,12 +67,14 @@ export class MarkController {
         )
         const mark: IMark = await this.markService.create(createMark)
         await this.folderService.addMark(folderId, mark._id)
-        return res.status(HttpStatus.CREATED).json({ mark })
+        return res.status(HttpStatus.CREATED).json({})
       } catch (e) {
-        return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ e })
+        return res
+          .status(HttpStatus.INTERNAL_SERVER_ERROR)
+          .json({ message: 'Internal server error' })
       }
     }
-    return res.status(HttpStatus.BAD_REQUEST).json({})
+    return res.status(HttpStatus.BAD_REQUEST).json({ message: 'Bad request' })
   }
 
   @Get(':id')
@@ -86,10 +87,12 @@ export class MarkController {
         const mark: IMark = await this.markService.get(id)
         return res.status(HttpStatus.OK).json({ mark })
       } catch (e) {
-        return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ e })
+        return res
+          .status(HttpStatus.INTERNAL_SERVER_ERROR)
+          .json({ message: 'Internal server error' })
       }
     }
-    return res.status(HttpStatus.BAD_REQUEST).json({})
+    return res.status(HttpStatus.BAD_REQUEST).json({ message: 'Bad request' })
   }
 
   @Put(':id')
@@ -110,10 +113,12 @@ export class MarkController {
         const mark: IMark = await this.markService.edit(id, editMark)
         return res.status(HttpStatus.OK).json({ mark })
       } catch (e) {
-        return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ e })
+        return res
+          .status(HttpStatus.INTERNAL_SERVER_ERROR)
+          .json({ message: 'Internal server error' })
       }
     }
-    return res.status(HttpStatus.BAD_REQUEST).json({})
+    return res.status(HttpStatus.BAD_REQUEST).json({ message: 'Bad request' })
   }
 
   @Delete(':id')
@@ -133,12 +138,14 @@ export class MarkController {
           await this.folderService.deleteMarkRef(id)
           return res.status(HttpStatus.OK).json({})
         }
-        return res.status(HttpStatus.NOT_MODIFIED).json({})
+        return res.status(HttpStatus.CONFLICT).json({ message: 'Mark has not been deleted' })
       } catch (e) {
-        return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ e })
+        return res
+          .status(HttpStatus.INTERNAL_SERVER_ERROR)
+          .json({ message: 'Internal server error' })
       }
     }
-    return res.status(HttpStatus.BAD_REQUEST).json({})
+    return res.status(HttpStatus.BAD_REQUEST).json({ message: 'Bad request' })
   }
 
   private async getTagIds(tags: ITag[]): Promise<ITag[]> {

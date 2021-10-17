@@ -40,10 +40,14 @@ export class UserController {
   ): Promise<Response> {
     res.setHeader('Access-Control-Allow-Origin', 'https://laster-marka.herokuapp.com')
     if (createUserDto) {
+      const duplicatedUser: IUser = await this.userService.getByEmail(createUserDto.email)
+      if (duplicatedUser) {
+        return res.status(HttpStatus.NOT_ACCEPTABLE).json({ message: "User already exist with this email"} )
+      }
       const user: IUser = await this.userService.signup(createUserDto)
-      return res.status(HttpStatus.CREATED).json({ user })
+      return res.status(HttpStatus.CREATED).json({})
     }
-    return res.status(HttpStatus.BAD_REQUEST).json({})
+    return res.status(HttpStatus.BAD_REQUEST).json({ message: 'Bad request' })
   }
 
   @Post('login')
@@ -52,8 +56,8 @@ export class UserController {
     @Body('getUserDto') getUserDto: GetUserDto
   ) {
     res.setHeader('Access-Control-Allow-Origin', 'https://laster-marka.herokuapp.com')
-    try {
-      const user: IUser = await this.userService.getByEmail(getUserDto.email)
+    const user: IUser = await this.userService.getByEmail(getUserDto.email)
+    if (user) {
       const isCorrectPassword = await user.comparePassword(getUserDto.password)
       if (isCorrectPassword) {
         const token = await this.userService.getToken(user.name)
@@ -68,8 +72,8 @@ export class UserController {
       } else {
         res.status(HttpStatus.BAD_REQUEST).json({ message: 'Wrong credentials' })
       }
-    } catch {
-      res.status(HttpStatus.BAD_REQUEST).json({ error: 'Wrong credentials' })
+    } else {
+      res.status(HttpStatus.BAD_REQUEST).json({ message: 'Wrong credentials' })
     }
   }
 
@@ -111,10 +115,12 @@ export class UserController {
         await this.userService.edit(name, editUserDto)
         return res.status(HttpStatus.OK).json({})
       } catch (e) {
-        return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ e })
+        return res
+          .status(HttpStatus.INTERNAL_SERVER_ERROR)
+          .json({ message: 'Internal server error' })
       }
     }
-    return res.status(HttpStatus.BAD_REQUEST).json({})
+    return res.status(HttpStatus.BAD_REQUEST).json({ message: 'Bad request' })
   }
 
   @Put('/password')
@@ -131,10 +137,12 @@ export class UserController {
         const user: IUser = await this.userService.editPassword(name, editPasswordDto)
         return res.status(HttpStatus.OK).json({ user })
       } catch (e) {
-        return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ e })
+        return res
+          .status(HttpStatus.INTERNAL_SERVER_ERROR)
+          .json({ message: 'Internal server error' })
       }
     }
-    return res.status(HttpStatus.BAD_REQUEST).json({})
+    return res.status(HttpStatus.BAD_REQUEST).json({ message: 'Bad request' })
   }
 
   @Delete()
@@ -146,11 +154,11 @@ export class UserController {
       const response: { ok?: number; n?: number } & { deletedCount?: number } =
         await this.userService.delete(name)
       if (response.ok === 1) {
-        return res.status(HttpStatus.OK).json({ response })
+        return res.status(HttpStatus.OK).json({})
       }
-      return res.status(HttpStatus.NOT_MODIFIED).json({})
+      return res.status(HttpStatus.CONFLICT).json({ message: 'User has not been deleted' })
     } catch (e) {
-      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ e })
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: 'Internal server error' })
     }
   }
 }
