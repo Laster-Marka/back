@@ -52,8 +52,8 @@ export class UserController {
     @Body('getUserDto') getUserDto: GetUserDto
   ) {
     res.setHeader('Access-Control-Allow-Origin', 'https://laster-marka.herokuapp.com')
-    const user: IUser = await this.userService.getByEmail(getUserDto.email)
-    if (user) {
+    try {
+      const user: IUser = await this.userService.getByEmail(getUserDto.email)
       const isCorrectPassword = await user.comparePassword(getUserDto.password)
       if (isCorrectPassword) {
         const token = await this.userService.getToken(user.name)
@@ -68,7 +68,7 @@ export class UserController {
       } else {
         res.status(HttpStatus.BAD_REQUEST).json({ message: 'Wrong credentials' })
       }
-    } else {
+    } catch {
       res.status(HttpStatus.BAD_REQUEST).json({ error: 'Wrong credentials' })
     }
   }
