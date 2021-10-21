@@ -67,7 +67,7 @@ export class UserController {
           sameSite: 'none',
           secure: true,
           path: '/',
-          expires: new Date(new Date().getTime() + 0.1 * 60 * 60 * 1000),
+          expires: new Date(new Date().getTime() + 10 * 60 * 60 * 1000),
           httpOnly: true
         })
         return token
