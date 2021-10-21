@@ -7,10 +7,7 @@ export class TokenMiddleware implements NestMiddleware {
   async use(req: Request, res: Response, next: NextFunction) {
     try {
       const cookie = req.cookies['jwt']
-      console.log('cookie: ' + cookie)
-      console.log('this.userService: ' + this.userService)
       const data = await this.userService.verifyToken(cookie)
-      console.log('data: ' + data)
       if (!data) {
         throw new UnauthorizedException()
       }

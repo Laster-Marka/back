@@ -1,4 +1,3 @@
-import { IType } from '../interfaces/type.interface'
 import { ITag } from '../interfaces/tag.interface'
 
 export class CreateMarkDto {

@@ -1,6 +1,4 @@
-import { Document } from 'mongoose'
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
-import { IConfig } from '../interfaces/config.interface'
 
 @Schema({ versionKey: false })
 export class Config<IConfig> {

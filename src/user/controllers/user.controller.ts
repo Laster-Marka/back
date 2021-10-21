@@ -42,7 +42,9 @@ export class UserController {
     if (createUserDto) {
       const duplicatedUser: IUser = await this.userService.getByEmail(createUserDto.email)
       if (duplicatedUser) {
-        return res.status(HttpStatus.NOT_ACCEPTABLE).json({ message: "User already exist with this email"} )
+        return res
+          .status(HttpStatus.NOT_ACCEPTABLE)
+          .json({ message: 'User already exist with this email' })
       }
       const user: IUser = await this.userService.signup(createUserDto)
       return res.status(HttpStatus.CREATED).json({})

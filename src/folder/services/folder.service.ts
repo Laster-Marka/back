@@ -4,7 +4,6 @@ import { Model, ObjectId } from 'mongoose'
 import { CreateFolderDto } from '../dto/create-folder.dto'
 import { EditFolderDto } from '../dto/edit-folder.dto'
 import { IFolder } from '../interfaces/folder.interface'
-import { IUser } from '../../user/interfaces/user.interface'
 
 @Injectable()
 export class FolderService {
